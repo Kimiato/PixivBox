@@ -1,1 +1,1 @@
-from .pixiv import aapi
+from .pixiv import pixiv
