@@ -1,5 +1,5 @@
 from . import app
-from api.views import get_recommend,get_rank
+from api.views import get_recommend,get_rank, search
 
 
 def add_base_route(handler, uri, methods=['GET', 'OPTIONS'], **ctx_kwargs):
@@ -10,3 +10,4 @@ def add_base_route(handler, uri, methods=['GET', 'OPTIONS'], **ctx_kwargs):
 
 add_base_route(get_recommend, 'recommend')
 add_base_route(get_rank, 'rank')
+add_base_route(search, 'search')

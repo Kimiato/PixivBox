@@ -11,9 +11,6 @@ def validate_mode(value):
         raise BadURL
 
 
-
-
-
 async def get_rank(request):
     """获取排名
     :request param:
