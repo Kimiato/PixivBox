@@ -17,4 +17,4 @@ sanic-routing==22.3.0
 websockets==10.3
 wrapt==1.14.1
 yarl==1.7.2
-requests==2.24.0
+requests==2.27.1
