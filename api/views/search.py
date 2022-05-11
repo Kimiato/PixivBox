@@ -17,16 +17,18 @@ async def search(request):
     """搜索
     :request param:
     word: [必选] 搜索关键字
+    offset: [可选] 偏移
     douration: [可选] 搜索时间范围 [within_last_day, within_last_week, within_last_month]
     start_date: [可选] string
     end_date: [可选] string
     """
     validateData(request)
     word = request.args.get("word")
+    offset = request.args.get('offset')
     duration = request.args.get("duration")
     start_date = request.args.get("start_date")
     end_date = request.args.get("end_date")
-    result = await Pixiv().api.search_illust(word=word,
+    result = await Pixiv().api.search_illust(word=word, offset=offset,
         duration=duration, start_date=start_date, end_date=end_date)
     i_img_url_replace(result)
 
