@@ -10,7 +10,11 @@ from sys import exit
 from urllib.parse import urlencode
 from webbrowser import open as open_url
 
-import requests
+import aiohttp
+from aiohttp_socks import ProxyConnector
+
+from api import config
+
 
 # Latest app version can be found using GET /v1/application-info/android
 USER_AGENT = "PixivAndroidApp/5.0.234 (Android 11; Pixel 5)"
@@ -52,7 +56,8 @@ def print_auth_token_response(response):
     print("expires_in:", data.get("expires_in", 0))
 
 
-def login():
+async def login():
+    connector = ProxyConnector.from_url(config.PROXY) if getattr(config, 'PROXY', None) else None
     code_verifier, code_challenge = oauth_pkce(s256)
     login_params = {
         "code_challenge": code_challenge,
@@ -67,34 +72,36 @@ def login():
     except (EOFError, KeyboardInterrupt):
         return
 
-    response = requests.post(
-        AUTH_TOKEN_URL,
-        data={
-            "client_id": CLIENT_ID,
-            "client_secret": CLIENT_SECRET,
-            "code": code,
-            "code_verifier": code_verifier,
-            "grant_type": "authorization_code",
-            "include_policy": "true",
-            "redirect_uri": REDIRECT_URI,
-        },
-        headers={"User-Agent": USER_AGENT},
-    )
+    async with aiohttp.ClientSession(connector=connector) as session:
+        async with session.post(
+            AUTH_TOKEN_URL,
+            data={
+                "client_id": CLIENT_ID,
+                "client_secret": CLIENT_SECRET,
+                "code": code,
+                "code_verifier": code_verifier,
+                "grant_type": "authorization_code",
+                "include_policy": "true",
+                "redirect_uri": REDIRECT_URI,
+            },
+            headers={"User-Agent": USER_AGENT},
+        ) as response:
+            return await response.json()
 
-    rst = response.json()
-    return rst
 
-
-def refresh(refresh_token):
-    response = requests.post(
-        AUTH_TOKEN_URL,
-        data={
-            "client_id": CLIENT_ID,
-            "client_secret": CLIENT_SECRET,
-            "grant_type": "refresh_token",
-            "include_policy": "true",
-            "refresh_token": refresh_token,
-        },
-        headers={"User-Agent": USER_AGENT},
-    )
-    return response.json()
+async def refresh(refresh_token):
+    connector = ProxyConnector.from_url(config.PROXY) if getattr(config, 'PROXY', None) else None
+    async with aiohttp.ClientSession(connector=connector) as session:
+        async with session.post(
+            AUTH_TOKEN_URL,
+            data={
+                "client_id": CLIENT_ID,
+                "client_secret": CLIENT_SECRET,
+                "grant_type": "refresh_token",
+                "include_policy": "true",
+                "refresh_token": refresh_token,
+            },
+            headers={"User-Agent": USER_AGENT},
+        ) as response:
+            rst = await response.json()
+            return rst

@@ -12,3 +12,12 @@ async def load_file(file_path):
 async def write_file(file_path, data):
     async with aiofiles.open(file_path, mode='w', encoding='utf-8') as f:
         await f.write(data)
+
+def Singleton(cls):
+    instances = {}
+    def getinstance(*args, **kwargs):
+        if cls not in instances:
+            instance = cls(*args, **kwargs)
+            instances[cls] = instance
+        return instances[cls]
+    return getinstance
