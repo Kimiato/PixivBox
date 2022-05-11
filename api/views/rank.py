@@ -2,6 +2,8 @@ from sanic.response import json
 from sanic.exceptions import BadURL
 
 from api.core import Pixiv
+from api.core.utils import i_img_url_replace
+
 
 def validate_mode(value):
     if value not in ['day', 'week', 'month', 'day_male', 'day_female',
@@ -24,5 +26,6 @@ async def get_rank(request):
     offset = request.args.get('offset')
     date = request.args.get('date')
 
-    rst = await Pixiv().api.illust_ranking(mode=mode, offset=offset, date=date)
-    return json(rst)
+    result = await Pixiv().api.illust_ranking(mode=mode, offset=offset, date=date)
+    i_img_url_replace(result)
+    return json(result)
