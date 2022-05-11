@@ -1,3 +1,3 @@
-PROXY = "socks5://127.0.0.1:10808"
+PROXY = ''
 
 i_PXIMG_URL_REPLACE_VALUE = ''
