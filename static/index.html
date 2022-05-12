@@ -63,6 +63,7 @@
       methods: {
         getData() {
           if (this.isBusy) return;
+          this.offset += 30;
           axios
             .get("api/rank", { params: { mode: "week", offset: this.offset } })
             .then((result) => {
@@ -79,7 +80,6 @@
                 });
               });
               this.imgsArr = this.imgsArr.concat(data);
-              this.offset += 30;
               console.log(this.imgsArr);
             })
             .catch((err) => {
