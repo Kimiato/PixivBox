@@ -72,7 +72,7 @@
               result.data.illusts.forEach((item) => {
                 data.push({
                   src: item.image_urls.medium,
-                  href: item.image_urls.large,
+                  href: item.meta_single_page.original_image_url || item.image_urls.large,
                   title: item.title,
                   width: item.width,
                   height: item.height,
