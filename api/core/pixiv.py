@@ -20,15 +20,15 @@ class Pixiv:
         if self.refresh_token is None:
             rst = await login()
             self.refresh_token = rst["refresh_token"]
-            await self._write_token()
         else:
             rst = await refresh(self.refresh_token)
-            self.access_token = rst['refresh_token']
+            self.refresh_token = rst['refresh_token']
+        await self._write_token()
         await self.api.login(refresh_token=self.refresh_token)
         logger.info("refresh token and login success")
 
     async def _write_token(self):
-        await write_file('.refresh_token', self.access_token)
+        await write_file('.refresh_token', self.refresh_token)
 
 async def refresh_token(*args):
     while True:
